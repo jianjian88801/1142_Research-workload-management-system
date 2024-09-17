@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.MishuDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.username as username
+        ,a.password as password
+        ,a.mishu_uuid_number as mishuUuidNumber
+        ,a.mishu_name as mishuName
+        ,a.mishu_phone as mishuPhone
+        ,a.mishu_photo as mishuPhoto
+        ,a.sex_types as sexTypes
+        ,a.mishu_email as mishuEmail
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.MishuView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM mishu  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and a.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and a.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.mishuUuidNumber != '' and params.mishuUuidNumber != null and params.mishuUuidNumber != 'null' ">
+                and a.mishu_uuid_number like CONCAT('%',#{params.mishuUuidNumber},'%')
+            </if>
+            <if test=" params.mishuName != '' and params.mishuName != null and params.mishuName != 'null' ">
+                and a.mishu_name like CONCAT('%',#{params.mishuName},'%')
+            </if>
+            <if test=" params.mishuPhone != '' and params.mishuPhone != null and params.mishuPhone != 'null' ">
+                and a.mishu_phone like CONCAT('%',#{params.mishuPhone},'%')
+            </if>
+            <if test="params.sexTypes != null and params.sexTypes != ''">
+                and a.sex_types = #{params.sexTypes}
+            </if>
+            <if test=" params.mishuEmail != '' and params.mishuEmail != null and params.mishuEmail != 'null' ">
+                and a.mishu_email like CONCAT('%',#{params.mishuEmail},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
